@@ -29,9 +29,9 @@ function SetupRules ($gtaExePath, $ipv4Ranges, $ruleName, $isInbound)
         Remove-NetFirewallRule -DisplayName $ruleName
     }
 
-    foreach($ipRand in $ipv4Ranges)
+    foreach($ipRange in $ipv4Ranges)
     {
-        Write-Host($ipRand)
+        Write-Host($ipRange)
     }
 
     if ($isInbound)
@@ -63,14 +63,13 @@ function IpAddressAddOrSubtract ($ipv4Address, $value)
 
     $addressAsInt = [BitConverter]::ToUInt32($bytes, 0)
 
-
     return ([IPAddress]$addressAsInt).ToString()
 }
 
 function Get-IpAddressRanges ($ipv4WhiteList)
 {
     $ipv4Ranges = New-Object System.Collections.Generic.List[System.Object]
-    $sortedList = $ipv4WhiteList | Sort-Object -Property { [System.Version]$_ } 
+    $sortedList = @($ipv4WhiteList | Sort-Object -Property { [System.Version]$_ })
 
     for ($i = 0; $i -lt $sortedList.Count + 1; $i++)
     {
@@ -78,8 +77,7 @@ function Get-IpAddressRanges ($ipv4WhiteList)
         if ($i -gt 0)
         {
             $start = $sortedList[$i - 1]
-            $start = IpAddressAddOrSubtract $start 1
-            
+            $start = IpAddressAddOrSubtract $start 1           
         } 
 
         $end = '255.255.255.255'
@@ -87,15 +85,17 @@ function Get-IpAddressRanges ($ipv4WhiteList)
         if($i -lt $sortedList.Count)
         {
             $end = $sortedList[$i];
+            
             $end = IpAddressAddOrSubtract $end -1
         }
+        
         $ipv4Ranges.Add($start + '-' + $end)
     }
 
     return $ipv4Ranges
 }
 
-$ipAddressRanges = Get-IpAddressRanges($ipv4AllowList)
+$ipAddressRanges = Get-IpAddressRanges $ipv4AllowList 
 
 #setup inbound rules
 SetupRules $gta5Path $ipAddressRanges $inboundRuleName $true
