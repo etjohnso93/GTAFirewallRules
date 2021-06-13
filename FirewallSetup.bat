@@ -1,1 +1,1 @@
-powershell.exe -ExecutionPolicy Bypass -Command ".\SetupGTA5Firewall.ps1"
+powershell.exe -ExecutionPolicy Bypass -Command "%~dp0SetupGTA5Firewall.ps1"

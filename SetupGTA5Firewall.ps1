@@ -20,7 +20,7 @@
 #                   )
 #or leave empty to block all and have a solo public session
 
-$ipv4AllowList = @()
+$ipv4AllowList = @('67.63.75.160','70.121.244.219','20.20.20.20')
 
 function SetupRules ($gtaExePath, $ipv4Ranges, $ruleName, $isInbound)
 {
